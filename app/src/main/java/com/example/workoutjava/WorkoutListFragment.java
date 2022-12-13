@@ -1,7 +1,10 @@
 package com.example.workoutjava;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
 
@@ -9,11 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 
 public class WorkoutListFragment extends ListFragment {
 
+    static interface WorkoutListListener {
+        void itemClicked(long id);
+    };
 
+    private WorkoutListListener listener;
 
     public WorkoutListFragment() {
         // Required empty public constructor
@@ -40,6 +48,22 @@ public class WorkoutListFragment extends ListFragment {
                 inflater.getContext(), android.R.layout.simple_list_item_1, names);
         setListAdapter(adapter);
 
-        return inflater.inflate(R.layout.fragment_workout_list, container, false);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    //Вызывается при присоединении фрагмента к активности.
+    @Override
+    public void onAttach(@NonNull Activity activity) {
+        super.onAttach(activity);
+        this.listener =  (WorkoutListListener)activity;
+    }
+
+    @Override
+    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
+        //super.onListItemClick(l, v, position, id);
+        //Сообщить слушателю о том, что на одном из вариантов ListView был сделан щелчок
+        if (listener != null) {
+            listener.itemClicked(id);
+        }
     }
 }
